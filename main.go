@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/Vicrrs/tutorial_gin/database"
 	"github.com/Vicrrs/tutorial_gin/models"
 	"github.com/Vicrrs/tutorial_gin/routes"
 )
@@ -13,6 +14,7 @@ func main() {
 		{Id: 2, Nome: "Nome 2", Historia: "Historia 2"},
 	}
 
+	database.ConectaComBancoDeDados()
 	fmt.Println("Iniciando servidor Rest com Go")
 	routes.HandleResquest()
 }
