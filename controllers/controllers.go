@@ -45,3 +45,16 @@ func CriaUmaNovaPersonalidade(w http.ResponseWriter, r *http.Request) {
 	// Retorna a personalidae criada como resposta em json
 	json.NewEncoder(w).Encode(novaPersonalidade)
 }
+
+func ApagaPersonalidade(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  id := vars["id"]
+
+  var personalidade models.Personalidade
+  if err := database.DB.Delete(&personalidade, id).Error; err != nil {
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+    return
+  }
+  w.WriteHeader(http.StatusNoContent) // 204 No content
+}
+
