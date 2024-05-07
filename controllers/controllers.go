@@ -47,14 +47,33 @@ func CriaUmaNovaPersonalidade(w http.ResponseWriter, r *http.Request) {
 }
 
 func ApagaPersonalidade(w http.ResponseWriter, r *http.Request) {
-  vars := mux.Vars(r)
-  id := vars["id"]
+	vars := mux.Vars(r)
+	id := vars["id"]
 
-  var personalidade models.Personalidade
-  if err := database.DB.Delete(&personalidade, id).Error; err != nil {
-    http.Error(w, err.Error(), http.StatusInternalServerError)
-    return
-  }
-  w.WriteHeader(http.StatusNoContent) // 204 No content
+	var personalidade models.Personalidade
+	if err := database.DB.Delete(&personalidade, id).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent) // 204 No content
 }
 
+func EditaPersonalidade(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	var personalidadeAtualizada models.Personalidade
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&personalidadeAtualizada); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Atualiza a personalidade com o ID especificado
+	if err := database.DB.Model(&models.Personalidade{}).Where("id = ?", id).Updates(personalidadeAtualizada).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(personalidadeAtualizada)
+}
